@@ -3,12 +3,12 @@ from datetime import datetime
 
 def mask_card_number(card_number):
     """
-    Маскирует номер карты, оставляя видимыми только первые 6 и последние 4 цифры.
+    Маскирует номер карты, оставляя видимыми первые 6 и последние 4 цифры.
 
-    Аргументы:
-        card_number (str): Полный номер карты.
+    Args:
+        card_number (str): Полный номер карты (16 цифр).
 
-    Возвращает:
+    Returns:
         str: Маскированный номер карты в формате XXXX XX** **** XXXX.
     """
     return f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
@@ -18,10 +18,10 @@ def mask_account_number(account_number):
     """
     Маскирует номер счета, показывая только последние 4 цифры.
 
-    Аргументы:
+    Args:
         account_number (str): Полный номер счета.
 
-    Возвращает:
+    Returns:
         str: Маскированный номер счета в формате **XXXX.
     """
     return f"**{account_number[-4:]}"
@@ -29,12 +29,12 @@ def mask_account_number(account_number):
 
 def format_date(date_str):
     """
-    Преобразует строку даты из формата ISO 8601 в формат ДД.ММ.ГГГГ.
+    Преобразует строку даты из формата ISO в формат ДД.ММ.ГГГГ.
 
-    Аргументы:
-        date_str (str): Дата в формате ISO 8601 (например, '2019-08-26T10:50:58.294041').
+    Args:
+        date_str (str): Дата в формате ISO (например, '2019-08-26T10:50:58.294041').
 
-    Возвращает:
+    Returns:
         str: Дата в формате ДД.ММ.ГГГГ.
     """
     return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d.%m.%Y")
@@ -47,11 +47,11 @@ def display_last_operations(operations):
     <откуда> -> <куда>
     <сумма перевода> <валюта>
 
-    Аргументы:
+    Args:
         operations (list): Список операций, содержащий информацию о переводах.
 
-    Функция фильтрует выполненные операции, сортирует их по дате,
-    маскирует номера карт и счетов, и выводит последние 5 операций.
+    Работает с операциями, имеющими статус "EXECUTED", сортирует их по дате
+    и выводит на экран данные по каждой операции, маскируя номера карт и счетов.
     """
     # Оставляем только выполненные операции и проверяем наличие ключа 'state'
     executed_operations = [op for op in operations if op.get("state") == "EXECUTED"]
@@ -87,3 +87,12 @@ def display_last_operations(operations):
         print(f"{date} {description}")
         print(f"{from_account} -> {to_account}")
         print(f"{amount} {currency}\n")
+
+
+# Пример использования функции:
+import json
+
+with open('operations.json', encoding='utf-8') as f:
+    operations = json.load(f)
+
+display_last_operations(operations)
