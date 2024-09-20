@@ -17,8 +17,8 @@ def format_date(date_str):
 
 
 def display_last_operations(operations):
-    # Оставляем только выполненные операции
-    executed_operations = [op for op in operations if op["state"] == "EXECUTED"]
+    # Оставляем только выполненные операции и проверяем наличие ключа 'state'
+    executed_operations = [op for op in operations if op.get("state") == "EXECUTED"]
 
     # Сортируем операции по дате в порядке убывания
     executed_operations.sort(key=lambda x: x["date"], reverse=True)
@@ -35,12 +35,16 @@ def display_last_operations(operations):
         from_account = operation.get("from", "")
         to_account = operation["to"]
 
-        # Маскируем номера карт и счетов
-        if "Счет" in from_account:
-            from_account = mask_account_number(from_account.split()[-1])
+        # Проверяем, есть ли данные в from_account и форматируем
+        if from_account:
+            if "Счет" in from_account:
+                from_account = mask_account_number(from_account.split()[-1])
+            else:
+                from_account = mask_card_number(from_account.split()[-1])
         else:
-            from_account = mask_card_number(from_account.split()[-1])
+            from_account = "Не указано"  # Если откуда-то перевод не указан
 
+        # Маскируем номер счета назначения
         to_account = mask_account_number(to_account.split()[-1])
 
         # Печатаем данные
